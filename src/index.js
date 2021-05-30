@@ -10,14 +10,11 @@ import rootReducer from './reducers';
 
 // function logger(obj, next, action)
 // logger(obj)(next)(action)  -->> Internally redux will call our middleware like this
-const logger = function({dispatch, getStore}) {
-  return function(next) {
-    return function(action ){
-      // middleware code
-      console.log('ACTION_TYPE = ', action.type);
-      next(action);   // this will call the next middleware. And if it is the last middleware, then dispatch is called
-    }
-  }
+
+const logger = ({dispatch, getStore}) => (next) => (action) => {
+  // middleware code
+  console.log('ACTION_TYPE = ', action.type);
+  next(action);   // this will call the next middleware. And if it is the last middleware, then dispatch is called
 }
 
 const store = createStore(rootReducer, applyMiddleware(logger));
