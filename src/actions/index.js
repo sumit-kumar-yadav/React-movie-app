@@ -43,3 +43,19 @@ export function addMovieToList (movie) {
         movie
     }
 }
+
+export function handleMovieSearch(movieName) {
+    const url = `http://www.omdbapi.com/?apikey=3ca5df7&t=${movieName}`;
+
+    return function(dispatch){
+        fetch(url)
+        // .then(response => console.log(response));  --> This will return the Response Object. But we want json
+        .then(response => response.json())
+        .then(movie => {
+            console.log('movie', movie);
+
+            // dispatch an action
+            // dispatch({type: 'ADD_SEARCH_RESULT', movie})
+        })
+    }
+}
