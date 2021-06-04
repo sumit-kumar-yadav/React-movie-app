@@ -49,6 +49,47 @@ class Provider extends React.Component{
   }
 }
 
+// The connect() takes the mapStateToProps function and then return a function 
+// which takes a component and then return a component passing the requested data from store as props of the component
+export function connect(callback) {
+  return function (Component) {
+    class ConnectedComponent extends React.Component {
+      constructor(props) {
+        super(props);
+        // Executed after dispatch is called
+        this.unsubscribe = this.props.store.subscribe(() => {
+          this.forceUpdate();
+        });
+      }
+
+      componentWillUnmount() {
+        this.unsubscribe();
+      }
+      render() {
+        const { store } = this.props;
+        const state = store.getState();
+        const dataToBeSentAsProps = callback(state);
+
+        return <Component dispatch={store.dispatch} {...dataToBeSentAsProps} />;
+      }
+    }
+
+    class ConnectedComponentWrapper extends React.Component {
+      render() {
+        return (
+          <StoreContext.Consumer>
+            {(store) => {
+              return <ConnectedComponent store={store} />;
+            }}
+          </StoreContext.Consumer>
+        );
+      }
+    }
+    return ConnectedComponentWrapper;
+  };
+}
+
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
